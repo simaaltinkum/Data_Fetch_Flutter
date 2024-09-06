@@ -24,25 +24,26 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
 
   // final baseUrl = 'https://mobileapitest.incigsyuasa.com/api/utility/List?listname= $listName';
 
-  final List<String> _dropboxFiles = [];
+  List<String> _dropboxFiles = [];
 
-  final List<String> _dropboxFiles2 = [
-    'Lokasyon 1',
-    'Lokasyon 2',
-    'Lokasyon 3',
-    'Lokasyon 4',
-  ];
+  List<String> _dropboxFiles2 = [];
 
-  final List<String> _dropboxFiles3 = [
-    'Kategori 1',
-    'Kategori 2',
-    'Kategori 3',
-    'Kategori 4',
-  ];
+  List<String> _dropboxFiles3 = [];
 
-  final List<String> _selectedFiles = [];
-  final List<String> _selectedFiles2 = [];
-  final List<String> _selectedFiles3 = [];
+  List<DropdownMenuItem<String>> dropdownItems = [];
+
+  List<DropdownMenuItem<String>> dropdownItems3 = [];
+
+  // final List<String> _selectedFiles = [];
+  // final List<String> _selectedFiles2 = [];
+  // final List<String> _selectedFiles3 = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDropboxFiles();
+    fetchDropboxFiles3();
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -60,100 +61,133 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
   }
 
   var token =
-      "2GWpvJI7ZWDqpUiIQ2LUJbkIzQBTMSgXv_1ODGkWiArS8w2g-P9tIV8tPvO-IVt65IBXP7OuZdvyrwN2WfsqNgs5NMBn_88_TzG8sTz0SpzZ0F85K4ds6RmfgLwWFIdzaoNqIX0kr3lsDmq1mE5M2T-cIP1Pmi8txWeZZCzLDKJhP-5EaF5ejx3CT-e5Q-4JPct38k5zDT-_kT9S3xVifQQ45XXxo_l-ZQF_Ip5nKiig0NLSrs9K3N82LVhDlU3e1IgpVn_1jG2isyeSI9z9u6j6Vj8O_907ovY2fK4WGxDLhjKaosncrIVMwM71hypFvtUufM4ZD7p55ONSUNNaZ5m-pveRiLB-CmrQ5tcN_JuTuZxkmFgy3vwGqGQqkjSv4UA_ojtZEdYkwMsN0rETwHdG1XOHdrxJQSNXBa-orvf0IeqZFbuYoUmOnZ0qBswSdJeVPkOTAkIwT_X0BnkrAf6Vd346aHVatARQD0UatSRCM72Gyk0wJSOR4CZmLI0wJ9_npUDda5HOuxXPd54gomiRW_L69e57iOx3jNGgJm0U0jsz6J4X_whXwGq70FaUt3r8ldgwPIUqUEiHzpcvZ0MXiIQF3xZc-An1hM7RtLsI0fqk4_hIR_JUkp9MnggbVHJsp5nINJIbJJ__HbiQNF7YDDSuwlKsmUFkE71iQYA";
+      "2ixKhuZDiGjd1nBp5xFmtm5nFB8CbAn9skwmiOq7NLHv426xjjJLs1LOaBTvvhFR5gFnlKqznsYrE-fPgwhylp12bjC8nYYsqhqCrA0a6I8PqgOIfmu5cDHcxgEJ-o0QeqgPBJWHoYYEN8Sejzo7v7gIkqUO0MhMZcoY1-331r38HgGft85mmHwMR5x4bw1wYUQAX4cL3SO93siJ5ji81ldclcrVP8RcZFCTIfSIKQmcmutG0FnmgAZdlKj66yJ4BjbnoVJi2SurwQT0JIqTFBbtMKvyov16gU5ucM4Bt_cGH_z0GsDH2swtCOORrGWJPbYWlEQKxA1_T_VdUHsReA_ko7QFIEBTkvYBdLZ6LfQa_xokIzW1eQhyDYsFCjSDY-d9_haZyVJ7hKAOrFhBBbiDBd4BT42yo9vUc-N7YxmwovbfTzzrfz2L4xdCKpiiX6415tEy2ofKHISNfVf629KMxBiURZnkb-AMUg9Mb2RK3NbeN1eUsgI-zxQEVmBhZTkfbFd-CoFm-Dooijdq2wn9L-_VS2YUaiOLzcI-l6-VQz9-fBQv7rzRTB8lZ3mmmgLOeNr_Py8fmapYIlRjfcPTJRPjse4nTrJ-Rmjrvi4C37LJ6CqEtgwTpBG0cFZz-4tyQX6bdIEuyIyA3IAaLPGq-2j5J48TCyMTTXTb_Q0";
+
+  
 
   Future<void> fetchDropboxFiles() async {
-    // url
     var headers = {'Authorization': 'Bearer $token'};
     var dio = Dio();
 
     final url =
         'https://mobileapitest.incigsyuasa.com/api/utility/List?listname=SEYAHAT_TALEP_HARCAMA_TIPLERI';
 
-    var response = await dio.request(url,
-        options: Options(
-          method: 'GET',
-          headers: headers,
-        ));
+    try {
+      var response = await dio.request(url,
+          options: Options(
+            method: 'GET',
+            headers: headers,
+          ));
 
-    if (response.statusCode == 200) {
-      var data = Model.fromJson(response.data);
-      //  List<dynamic> data = jsonDecode(response.body);
-      data.result!.forEach((element) {
-        _dropboxFiles.add(element.key1!);
-      });
-    } else {
-      // debugger();
-      throw Exception('Failed to load dropbox files');
+      if (response.statusCode == 200) {
+        var data = Model.fromJson(response.data);
+        setState(() {
+          _dropboxFiles = data.result!.map((e) => e.key1!).toList();
+          dropdownItems = List.generate(_dropboxFiles.length, (index) {
+            return DropdownMenuItem(
+              child: Text(_dropboxFiles[index]),
+              value: _dropboxFiles[index],
+            );
+          });
+        });
+      } else {
+        print('Failed to load dropbox files: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('DioError: ${e.message}');
+        if (e.response != null) {
+          print('Response data: ${e.response?.data}');
+          print('Response headers: ${e.response?.headers}');
+          print('Response request: ${e.response?.requestOptions}');
+        }
+      } else {
+        print('Error: $e');
+      }
     }
   }
 
-  void _selectDropboxFile(BuildContext context, int dropboxIndex) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: dropboxIndex == 1
-              ? _dropboxFiles.length
-              : dropboxIndex == 2
-                  ? _dropboxFiles2.length
-                  : _dropboxFiles3.length,
-          itemBuilder: (context, index) {
-            final item = dropboxIndex == 1
-                ? _dropboxFiles[index]
-                : dropboxIndex == 2
-                    ? _dropboxFiles2[index]
-                    : _dropboxFiles3[index];
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  if (dropboxIndex == 1) {
-                    _selectedDropboxFile1 = item;
-                    _dropboxController1.text = _selectedDropboxFile1!;
-                    _selectedFiles.add(_selectedDropboxFile1!);
-                  } else if (dropboxIndex == 2) {
-                    _selectedDropboxFile2 = item;
-                    _dropboxController2.text = _selectedDropboxFile2!;
-                    _selectedFiles2.add(_selectedDropboxFile2!);
-                  } else if (dropboxIndex == 3) {
-                    _selectedDropboxFile3 = item;
-                    _dropboxController3.text = _selectedDropboxFile3!;
-                    _selectedFiles3.add(_selectedDropboxFile3!);
-                  }
-                });
-                Navigator.pop(context);
-              },
-            );
-          },
-        );
-      },
-    );
-  }
+  Future<void> fetchDropboxFiles3() async {
+    var headers = {'Authorization': 'Bearer $token'};
+    var dio = Dio();
 
-  List<DropdownMenuItem<String>> dropdownItems = [];
+    final url =
+        'https://mobileapitest.incigsyuasa.com/api/utility/List?listname=GENEL_PARA_BIRIMI';
+
+    try {
+      var response = await dio.request(url,
+          options: Options(
+            method: 'GET',
+            headers: headers,
+          ));
+
+      if (response.statusCode == 200) {
+        var data = Model.fromJson(response.data);
+        setState(() {
+          _dropboxFiles3 = data.result!.map((e) => e.key1!).toList();
+          dropdownItems3 = List.generate(_dropboxFiles3.length, (index) {
+            return DropdownMenuItem(
+              child: Text(_dropboxFiles3[index]),
+              value: _dropboxFiles3[index],
+            );
+          });
+        });
+      } else {
+        print('Failed to load dropbox files: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('DioError: ${e.message}');
+        if (e.response != null) {
+          print('Response data: ${e.response?.data}');
+          print('Response headers: ${e.response?.headers}');
+          print('Response request: ${e.response?.requestOptions}');
+        }
+      } else {
+        print('Error: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    dropdownItems = List.generate(_dropboxFiles.length, (index) {
-      return DropdownMenuItem(
-        child: Text(_dropboxFiles[index]),
-        value: _dropboxFiles[index],
-      );
-    });
+    // fetchDropboxFiles();
+    // setState(() {
+    //   dropdownItems = List.generate(_dropboxFiles.length, (index) {
+    //     return DropdownMenuItem(
+    //       child: Text(_dropboxFiles[index]),
+    //       value: _dropboxFiles[index],
+    //     );
+    //   });
+    // });
+
+    // fetchDropboxFiles3();
+    // setState(() {
+    //   dropdownItems3 = List.generate(_dropboxFiles3.length, (index) {
+    //     return DropdownMenuItem(
+    //       child: Text(_dropboxFiles3[index]),
+    //       value: _dropboxFiles3[index],
+    //     );
+    //   });
+    // });
+    // dropdownItems = List.generate(_dropboxFiles.length, (index) {
+    //   return DropdownMenuItem(
+    //     child: Text(_dropboxFiles[index]),
+    //     value: _dropboxFiles[index],
+    //   );
+    // });
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Hesap Sayfası'),
       ),
-      body: Center(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(
-              height: 50.0,
-            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
@@ -166,57 +200,37 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
                 onTap: () => _selectDate(context),
               ),
             ),
-            SizedBox(height: 10.0),
+
             Text(
               _selectedDate == null
                   ? 'Tarih seçilmedi'
                   : 'Seçilen Tarih: ${_selectedDate!.toLocal()}'.split(' ')[0],
             ),
-            SizedBox(height: 10.0),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: DropdownButtonFormField(
+                  decoration: InputDecoration(labelText: 'Harcama Tipi'),
                   items: dropdownItems,
-                  onChanged: (value) {
-                    // setState(() {
-                    //   _selectedDropboxFile1 = value;
-                    //   _dropboxController1.text = _selectedDropboxFile1!;
-                    //   _selectedFiles.add(_selectedDropboxFile1!);
-                    // });
-                  }),
-              // child: TextField(
-              //   controller: _dropboxController1,
-              //   decoration: InputDecoration(
-              //     labelText: 'Harcama Tipi 1',
-              //     hintText: 'Harcama Tipi 1 seçmek için tıklayın',
-              //   ),
-              //   readOnly: true,
-              //   onTap: () async {
-              //     setState(() {
-              //       fetchDropboxFiles();
-              //       _selectDropboxFile(context, 1);
-              //     });
-              //   },
-              // ),
+                  onChanged: (value) {}),
             ),
-            SizedBox(height: 10.0),
+
             Text(
               _selectedDropboxFile1 == null
                   ? 'Dosya seçilmedi'
                   : 'Seçilen Dosya: $_selectedDropboxFile1',
             ),
-            SizedBox(height: 10.0),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
-                controller: _dropboxController2,
-                decoration: InputDecoration(
-                  labelText: 'Harcama Lokasyonu',
-                  hintText: 'Harcama Lokasyonu seçmek için tıklayın',
-                ),
-                readOnly: true,
-                onTap: () => _selectDropboxFile(context, 2),
-              ),
+                  controller: _dropboxController2,
+                  decoration: InputDecoration(
+                    labelText: 'Harcama Lokasyonu',
+                    hintText: 'Harcama Lokasyonu seçmek için tıklayın',
+                  ),
+                  readOnly: true,
+                  onTap: () {}),
             ),
             SizedBox(height: 10.0),
             Text(
@@ -224,7 +238,7 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
                   ? 'Lokasyon seçilmedi'
                   : 'Seçilen Lokasyon: $_selectedDropboxFile2',
             ),
-            SizedBox(height: 10.0),
+            //  SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
@@ -236,26 +250,15 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
                 keyboardType: TextInputType.number,
               ),
             ),
-            SizedBox(height: 10.0),
+            // SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                controller: _dropboxController3,
-                decoration: InputDecoration(
-                  labelText: 'Harcama Kategorisi',
-                  hintText: 'Harcama Kategorisi seçmek için tıklayın',
-                ),
-                readOnly: true,
-                onTap: () => _selectDropboxFile(context, 3),
-              ),
+              child: DropdownButtonFormField(
+                  decoration: InputDecoration(labelText: 'Harcama Birimi'),
+                  items: dropdownItems3,
+                  onChanged: (value) {}),
             ),
-            SizedBox(height: 10.0),
-            Text(
-              _selectedDropboxFile3 == null
-                  ? 'Kategori seçilmedi'
-                  : 'Seçilen Kategori: $_selectedDropboxFile3',
-            ),
-            SizedBox(height: 10.0),
+            //SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
@@ -266,33 +269,56 @@ class _TarihOlusturmaBirimiState extends State<TarihOlusturmaBirimi> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _selectedFiles.length +
-                    _selectedFiles2.length +
-                    _selectedFiles3.length,
-                itemBuilder: (context, index) {
-                  final item = index < _selectedFiles.length
-                      ? _selectedFiles[index]
-                      : index < _selectedFiles.length + _selectedFiles2.length
-                          ? _selectedFiles2[index - _selectedFiles.length]
-                          : _selectedFiles3[index -
-                              _selectedFiles.length -
-                              _selectedFiles2.length];
-                  return ListTile(
-                    title: Text(item),
-                  );
-                },
-              ),
-            ),
+            //  SizedBox(height: 100.0),
           ],
         ),
       ),
     );
   }
-}
+  }
 
-void main() => runApp(MaterialApp(
-      home: TarihOlusturmaBirimi(),
-    ));
+
+
+
+// void _selectDropboxFile(BuildContext context, int dropboxIndex) {
+//     showModalBottomSheet(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return ListView.builder(
+//           itemCount: dropboxIndex == 1
+//               ? _dropboxFiles.length
+//               : dropboxIndex == 2
+//                   ? _dropboxFiles2.length
+//                   : _dropboxFiles3.length,
+//           itemBuilder: (context, index) {
+//             final item = dropboxIndex == 1
+//                 ? _dropboxFiles[index]
+//                 : dropboxIndex == 2
+//                     ? _dropboxFiles2[index]
+//                     : _dropboxFiles3[index];
+//             return ListTile(
+//               title: Text(item),
+//               onTap: () {
+//                 setState(() {
+//                   if (dropboxIndex == 1) {
+//                     _selectedDropboxFile1 = item;
+//                     _dropboxController1.text = _selectedDropboxFile1!;
+//                     _selectedFiles.add(_selectedDropboxFile1!);
+//                   } else if (dropboxIndex == 2) {
+//                     _selectedDropboxFile2 = item;
+//                     _dropboxController2.text = _selectedDropboxFile2!;
+//                     _selectedFiles2.add(_selectedDropboxFile2!);
+//                   } else if (dropboxIndex == 3) {
+//                     _selectedDropboxFile3 = item;
+//                     _dropboxController3.text = _selectedDropboxFile3!;
+//                     _selectedFiles3.add(_selectedDropboxFile3!);
+//                   }
+//                 });
+//                 Navigator.pop(context);
+//               },
+//             );
+//           },
+//         );
+//       },
+//     );
+//   }
